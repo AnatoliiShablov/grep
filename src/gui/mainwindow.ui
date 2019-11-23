@@ -24,14 +24,36 @@
     <item>
      <layout class="QVBoxLayout" name="main_part">
       <item>
-       <widget class="QListWidget" name="files_and_dirs">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <layout class="QHBoxLayout" name="fd_layout">
+        <item>
+         <widget class="QListWidget" name="files_and_dirs">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" name="buttons_layout">
+          <item>
+           <widget class="QPushButton" name="add_files">
+            <property name="text">
+             <string>Add Files</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="add_dir">
+            <property name="text">
+             <string>Add Directory</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </item>
       <item>
        <widget class="QListWidget" name="result">

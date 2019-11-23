@@ -6,14 +6,11 @@ CONFIG += c++17
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += main.cpp \
-    mainwindow.cpp
-   # multithread_grep.cpp
+SOURCES += src/main.cpp src/gui/mainwindow.cpp
 
-HEADERS += mainwindow.h
- #   multithread_grep.h
+HEADERS += src/gui/mainwindow.h
 
-FORMS += mainwindow.ui
+FORMS += src/gui/mainwindow.ui
 
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
