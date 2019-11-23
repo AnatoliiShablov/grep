@@ -56,6 +56,9 @@
        </layout>
       </item>
       <item>
+       <widget class="QLineEdit" name="string_to_find"/>
+      </item>
+      <item>
        <widget class="QListWidget" name="result">
         <property name="sizePolicy">
          <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">

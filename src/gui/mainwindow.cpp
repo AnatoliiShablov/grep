@@ -16,15 +16,15 @@ MainWindow::~MainWindow() {
 
 void MainWindow::on_find_button_clicked() {
     ui->result->clear();
-    for (int row = 0; row + 1 < ui->files_and_dirs->count(); ++row) {
+    for (int row = 0; row < ui->files_and_dirs->count(); ++row) {
         QListWidgetItem *item = ui->files_and_dirs->item(row);
         auto path = QDir::cleanPath(item->text());
-        ui->result->addItem(item->text());
         QString previous(path);
         while ((path = QFileInfo(path).path()).length() < previous.length()) {
+            ui->result->addItem(previous.right(previous.size() - path.length()));
             previous = path;
-            ui->result->addItem(previous);
         }
+        ui->result->addItem(previous);
     }
 }
 
