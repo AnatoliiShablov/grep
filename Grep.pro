@@ -6,9 +6,9 @@ CONFIG += c++17
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
-SOURCES += src/main.cpp src/gui/mainwindow.cpp
+SOURCES += src/main.cpp src/gui/mainwindow.cpp src/grep/grep.cpp
 
-HEADERS += src/gui/mainwindow.h
+HEADERS += src/gui/mainwindow.h src/grep/grep.h
 
 FORMS += src/gui/mainwindow.ui
 

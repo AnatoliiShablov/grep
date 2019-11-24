@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Grep</string>
   </property>
   <widget class="QWidget" name="main_widget">
    <property name="sizePolicy">
@@ -71,7 +71,7 @@
       <item>
        <widget class="QLabel" name="total_amount">
         <property name="text">
-         <string>Total count: 0</string>
+         <string>Total amount: 0</string>
         </property>
        </widget>
       </item>
@@ -123,7 +123,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QPushButton" name="find_button">
+       <widget class="QPushButton" name="find_cancel_button">
         <property name="text">
          <string>Find</string>
         </property>

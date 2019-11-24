@@ -6,13 +6,11 @@
 #include <QKeyEvent>
 #include <QListWidget>
 #include <QMainWindow>
-#include <atomic>
-#include <exception>
-#include <filesystem>
+#include <QMessageBox>
 #include <mutex>
-#include <queue>
 #include <thread>
-#include <vector>
+
+#include "../grep/grep.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,15 +26,25 @@ public:
     ~MainWindow();
 
 private slots:
-    void on_find_button_clicked();
-
     void keyPressEvent(QKeyEvent *event);
 
     void on_add_files_clicked();
 
     void on_add_dir_clicked();
 
+    void on_find_cancel_button_clicked();
+
+    void finish_searching();
+
+    void new_info(int percentage, QStringList const &new_lines);
+
 private:
     Ui::MainWindow *ui;
+
+    std::mutex change_info_mutex;
+    bool searching;
+
+    grep_with_scheduler *background_scheduler;
+    size_t total_found;
 };
 #endif  // MAINWINDOW_H
