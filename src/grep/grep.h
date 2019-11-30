@@ -5,6 +5,7 @@
 #include <QFileInfo>
 #include <QString>
 #include <QStringList>
+#include <QTextStream>
 #include <condition_variable>
 #include <functional>
 #include <iostream>

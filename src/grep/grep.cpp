@@ -183,9 +183,9 @@ void multithreading_grep::new_task(std::queue<QString> start_pathes, QString sub
     this->start_pathes = std::move(start_pathes);
     this->case_policy.store(case_policy);
     if (!case_policy) {
-        this->substr = substr.toLower();
+        this->substr = substr.toLower().toUtf8();
     } else {
-        this->substr = std::move(substr);
+        this->substr = substr.toUtf8();
     }
     this->already_added_files.clear();
     this->files = decltype(this->files){};
