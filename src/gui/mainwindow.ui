@@ -87,29 +87,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="skip_bin">
-        <property name="text">
-         <string>Skip binary files</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="text_bin">
-        <property name="text">
-         <string>Binary as text</string>
-        </property>
-        <property name="autoExclusive">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
          <enum>Qt::Vertical</enum>

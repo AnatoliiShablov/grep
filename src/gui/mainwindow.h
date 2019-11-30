@@ -36,15 +36,14 @@ private slots:
 
     void finish_searching();
 
-    void new_info(int percentage, QStringList const &new_lines);
+    void new_info_percentage(int percentage);
+
+    void new_info_substr(QString const &new_line);
 
 private:
     Ui::MainWindow *ui;
 
-    std::mutex change_info_mutex;
-    bool searching;
-
-    grep_with_scheduler *background_scheduler;
+    multithreading_grep background_thread;
     size_t total_found;
 };
 #endif  // MAINWINDOW_H

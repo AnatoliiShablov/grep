@@ -2,19 +2,21 @@
 
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow{parent}
-    , ui{new Ui::MainWindow}
-    , searching{false}
-    , background_scheduler{nullptr}
-
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow{parent}, ui{new Ui::MainWindow} {
     ui->setupUi(this);
+    QSizePolicy policy = ui->progress_bar->sizePolicy();
+    policy.setRetainSizeWhenHidden(true);
+    ui->progress_bar->setHidden(true);
+    ui->progress_bar->setSizePolicy(policy);
+    connect(&background_thread, &multithreading_grep::send_info_percentage, this, &MainWindow::new_info_percentage,
+            Qt::QueuedConnection);
+    connect(&background_thread, &multithreading_grep::send_info_substr, this, &MainWindow::new_info_substr,
+            Qt::QueuedConnection);
+    connect(&background_thread, &multithreading_grep::send_complete_signal, this, &MainWindow::finish_searching,
+            Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow() {
-    searching = false;
-    delete background_scheduler;
     delete ui;
 }
 
@@ -44,47 +46,39 @@ void MainWindow::on_add_dir_clicked() {
 }
 
 void MainWindow::on_find_cancel_button_clicked() {
-    std::lock_guard<std::mutex> locker{change_info_mutex};
-    if (searching) {
-        searching = false;
-        delete background_scheduler;
-        background_scheduler = nullptr;
+    if (ui->find_cancel_button->text() == "Cancel") {
         ui->find_cancel_button->setText("Find");
         ui->progress_bar->setHidden(true);
+        background_thread.terminate_process();
     } else {
         if (ui->string_to_find->text().isEmpty() || ui->files_and_dirs->count() == 0) {
             QMessageBox::warning(this, "BAD", "BAD");
         } else {
-            delete background_scheduler;
-            searching = true;
             total_found = 0;
-            QStringList list;
+            std::queue<QString> list;
             for (int row = 0; row < ui->files_and_dirs->count(); ++row) {
-                list.append(ui->files_and_dirs->item(row)->text());
+                list.push(ui->files_and_dirs->item(row)->text());
             }
-            background_scheduler = new grep_with_scheduler(
-                std::ref(searching), std::move(list), ui->ignore_case, [this] { this->finish_searching(); },
-                [this](int percentage, QStringList const &new_lines) { this->new_info(percentage, new_lines); });
+            ui->result->clear();
             ui->find_cancel_button->setText("Cancel");
             ui->progress_bar->setHidden(false);
             ui->progress_bar->setValue(0);
+            background_thread.new_task(list, ui->string_to_find->text(), !ui->ignore_case->checkState());
         }
     }
 }
 
 void MainWindow::finish_searching() {
-    if (searching) {
-        std::lock_guard<std::mutex> locker{change_info_mutex};
-        searching = false;
-        ui->find_cancel_button->setText("Find");
-        ui->progress_bar->setHidden(true);
-        QMessageBox::information(this, "Finish", QString::number(total_found));
-    }
+    ui->find_cancel_button->setText("Find");
+    ui->progress_bar->setHidden(true);
+    QMessageBox::information(this, "Finish", QString::number(total_found));
 }
 
-void MainWindow::new_info(int percentage, QStringList const &new_lines) {
-    std::lock_guard<std::mutex> locker{change_info_mutex};
-    ui->total_amount->setText("Total amount: " + QString::number(total_found += static_cast<size_t>(new_lines.count())));
-    ui->result->addItems(new_lines);
+void MainWindow::new_info_percentage(int percentage) {
     ui->progress_bar->setValue(percentage);
+}
+
+void MainWindow::new_info_substr(QString const &new_line) {
+    ui->total_amount->setText("Total amount: " + QString::number(++total_found));
+    ui->result->addItem(new_line);
 }

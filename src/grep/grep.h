@@ -5,7 +5,9 @@
 #include <QFileInfo>
 #include <QString>
 #include <QStringList>
+#include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -18,27 +20,63 @@ struct hash<QString> {
 };
 }  // namespace std
 
-class grep_with_scheduler {
+class multithreading_grep: public QObject {
+    Q_OBJECT
 public:
-    grep_with_scheduler(bool &searching, QStringList &&start_pathes, bool case_policy, std::function<void()> &&on_success,
-                        std::function<void(int, QStringList const &)> &&on_changes);
-    ~grep_with_scheduler();
+    multithreading_grep();
+    ~multithreading_grep();
+
+    void terminate_process();
+
+    void new_task(std::queue<QString> start_pathes, QString substr, bool case_policy);
+signals:
+    void send_info_percentage(int);
+
+    void send_info_substr(QString const &);
+
+    void send_complete_signal();
 
 private:
-    const int working_threads_amount;
-    std::atomic_int exited_threads_amount;
-    std::thread checking;
+    const size_t working_threads_amount;
 
-    bool &searching;
-    bool plusing;
-    std::vector<std::thread> threads;
-    std::function<void()> on_success;
-    std::function<void(int, QStringList const &)> on_changes;
+    std::atomic_size_t exited_threads_amount;
+    std::mutex exit_mutex;
+    std::condition_variable cv_threads_exit;
+    std::thread exit_thread;
+
+    std::atomic_size_t completed_threads_amount;
+    std::mutex complete_mutex;
+    std::condition_variable cv_threads_complete;
+    std::thread complete_thread;
+
+    std::vector<std::thread> working_threads;
+
+    std::atomic_bool terminate;
+    std::mutex terminate_mutex;
+    std::condition_variable cv_terminate;
+
+    std::atomic_bool work;
+    std::mutex work_mutex;
+    std::condition_variable cv_work;
+
+    std::atomic_bool complete;
+    std::atomic_bool quit;
+
+    std::queue<QString> start_pathes;
+    QString substr;
+    std::atomic_bool case_policy;
+    std::atomic_size_t parsing_threads;
+    std::mutex pathes_mutex;
+
+    std::unordered_set<QString> already_added_files;
     std::queue<QString> files;
-    std::atomic_uint64_t scanned;
-    std::atomic_uint64_t total;
-    std::mutex lock_files_queue;
-    std::unordered_set<QString> already_added;
+    std::mutex files_mutex;
+    std::mutex low_priority;
+    std::mutex next_to_access;
+    std::condition_variable cv_file_added;
+
+    std::atomic_uint64_t amount_of_scanned;
+    std::atomic_uint64_t total_amount_approx;
 };
 
 #endif
