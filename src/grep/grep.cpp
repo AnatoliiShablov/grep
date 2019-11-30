@@ -119,7 +119,7 @@ multithreading_grep::multithreading_grep()
                                     break;
                                 }
 
-                                if (line.isEmpty()) {
+                                if (line.length() < substr_this_thread.length()) {
                                     ++line_number;
                                     continue;
                                 }
@@ -183,9 +183,9 @@ void multithreading_grep::new_task(std::queue<QString> start_pathes, QString sub
     this->start_pathes = std::move(start_pathes);
     this->case_policy.store(case_policy);
     if (!case_policy) {
-        this->substr = substr.toLower().toUtf8();
+        this->substr = substr.toLower();
     } else {
-        this->substr = substr.toUtf8();
+        this->substr = std::move(substr);
     }
     this->already_added_files.clear();
     this->files = decltype(this->files){};

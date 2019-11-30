@@ -4,6 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow{parent}, ui{new Ui::MainWindow} {
     ui->setupUi(this);
+    ui->result->setUniformItemSizes(true);
     QSizePolicy policy = ui->progress_bar->sizePolicy();
     policy.setRetainSizeWhenHidden(true);
     ui->progress_bar->setHidden(true);
